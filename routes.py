@@ -1,7 +1,11 @@
+from datetime import datetime
+
 from flask import flash, jsonify, redirect, render_template_string, request, url_for
 from sqlalchemy import func
 
 from models import db, EvaluacionEstudiante, EvaluacionProfesor, EvaluacionReferente
+
+SCHOOL_OPTIONS = ('Colegio Técnico Provincial Antonio Martín Marte (CTPAMM)',)
 
 
 BASE_TEMPLATE = """
@@ -224,12 +228,16 @@ FORM_ESTUDIANTE_TEMPLATE = BASE_TEMPLATE + """
             </div>
 
             <form method="POST" action="{{ url_for('evaluacion_estudiante') }}">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6"><label class="form-label fw-semibold">Año de evaluación *</label><input type="number" name="anio_evaluacion" class="form-control" min="2000" value="{{ current_year }}" required></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">Instancia *</label><select name="periodo" class="form-select" required><option value="" selected disabled>Seleccione una instancia</option><option value="mitad">Mitad de año</option><option value="final">Final de año</option></select></div>
+                </div>
                 <h5 class="form-section-title"><i class="fa-solid fa-id-card me-2"></i>1. Datos Generales</h5>
                 <div class="row g-3 mb-4">
                     <div class="col-md-6"><label class="form-label fw-semibold">Nombre y Apellido del Estudiante *</label><input type="text" name="nombre_estudiante" class="form-control" required placeholder="Ej: Juan Pérez"></div>
                     <div class="col-md-3"><label class="form-label fw-semibold">Año / División *</label><input type="text" name="anio_division" class="form-control" required placeholder="Ej: 6to 2da"></div>
                     <div class="col-md-3"><label class="form-label fw-semibold">Especialidad *</label><input type="text" name="especialidad" class="form-control" required placeholder="Ej: Electromecánica / Informática"></div>
-                    <div class="col-md-6"><label class="form-label fw-semibold">Escuela Técnica *</label><input type="text" name="escuela" class="form-control" required placeholder="Ej: EETP N° 461"></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">Escuela Técnica *</label><select name="escuela" class="form-select" required><option value="" selected disabled>Seleccione la escuela</option>{% for escuela in school_options %}<option value="{{ escuela }}">{{ escuela }}</option>{% endfor %}</select></div>
                     <div class="col-md-6"><label class="form-label fw-semibold">Empresa / Organización *</label><input type="text" name="empresa" class="form-control" required placeholder="Ej: Techint / Mantenimiento SRL"></div>
                     <div class="col-md-4"><label class="form-label fw-semibold">Área / Sector asignado *</label><input type="text" name="area" class="form-control" required placeholder="Ej: Control de Calidad"></div>
                     <div class="col-md-4"><label class="form-label fw-semibold">Referente en la Empresa *</label><input type="text" name="referente_empresa" class="form-control" required placeholder="Ej: Ing. Carlos Gómez"></div>
@@ -308,10 +316,14 @@ FORM_PROFESOR_TEMPLATE = BASE_TEMPLATE + """
             </div>
 
             <form method="POST" action="{{ url_for('evaluacion_profesor') }}">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6"><label class="form-label fw-semibold">Año de evaluación *</label><input type="number" name="anio_evaluacion" class="form-control" min="2000" value="{{ current_year }}" required></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">Instancia *</label><select name="periodo" class="form-select" required><option value="" selected disabled>Seleccione una instancia</option><option value="mitad">Mitad de año</option><option value="final">Final de año</option></select></div>
+                </div>
                 <h5 class="form-section-title"><i class="fa-solid fa-id-card me-2"></i>1. Datos de la Escuela y Empresa</h5>
                 <div class="row g-3 mb-4">
                     <div class="col-md-6"><label class="form-label fw-semibold">Nombre del Profesor *</label><input type="text" name="nombre_profesor" class="form-control" required placeholder="Ej: Ing. Mario Silva"></div>
-                    <div class="col-md-6"><label class="form-label fw-semibold">Escuela Técnica *</label><input type="text" name="escuela" class="form-control" required placeholder="Ej: EETP N° 461"></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">Escuela Técnica *</label><select name="escuela" class="form-select" required><option value="" selected disabled>Seleccione la escuela</option>{% for escuela in school_options %}<option value="{{ escuela }}">{{ escuela }}</option>{% endfor %}</select></div>
                     <div class="col-md-8"><label class="form-label fw-semibold">Empresa donde realizaron la Práctica *</label><input type="text" name="empresa" class="form-control" required placeholder="Ej: Acindar / Mahle"></div>
                     <div class="col-md-4"><label class="form-label fw-semibold">Cantidad de estudiantes a su cargo *</label><input type="number" name="cantidad_estudiantes" min="1" class="form-control" value="1" required></div>
                 </div>
@@ -371,6 +383,10 @@ FORM_REFERENTE_TEMPLATE = BASE_TEMPLATE + """
             </div>
 
             <form method="POST" action="{{ url_for('evaluacion_referente') }}">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6"><label class="form-label fw-semibold">Año de evaluación *</label><input type="number" name="anio_evaluacion" class="form-control" min="2000" value="{{ current_year }}" required></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">Instancia *</label><select name="periodo" class="form-select" required><option value="" selected disabled>Seleccione una instancia</option><option value="mitad">Mitad de año</option><option value="final">Final de año</option></select></div>
+                </div>
                 <h5 class="form-section-title"><i class="fa-solid fa-building me-2"></i>1. Datos del Referente y Empresa</h5>
                 <div class="row g-3 mb-4">
                     <div class="col-md-6"><label class="form-label fw-semibold">Nombre del Referente / Instructor *</label><input type="text" name="nombre_referente" class="form-control" required placeholder="Ej: Ing. Laura Fernández"></div>
@@ -394,7 +410,8 @@ FORM_REFERENTE_TEMPLATE = BASE_TEMPLATE + """
                                 ('desempeno_calidad_herramientas', 'Calidad del trabajo y uso adecuado de herramientas/equipos'),
                                 ('desempeno_autonomia_iniciativa', 'Autonomía en tareas e iniciativa/resolución de problemas'),
                                 ('desempeno_trabajo_equipo', 'Espíritu de colaboración y trabajo en equipo'),
-                                ('desempeno_responsabilidad', 'Asistencia, puntualidad, responsabilidad e interés')
+                                ('desempeno_responsabilidad', 'Asistencia, puntualidad, responsabilidad e interés'),
+                                ('desempeno_adaptabilidad_tecnologica', 'Adaptabilidad al uso de nuevo herramental, equipamientos y tecnologías')
                             ] %}
                             {% for field_name, label in desempeno_items %}
                             <tr>
@@ -473,6 +490,12 @@ DASHBOARD_TEMPLATE = BASE_TEMPLATE + """
     <div class="col-lg-5"><div class="card card-custom p-4 h-100"><h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-pie text-success me-2"></i> Competencias de Estudiantes según Tutores</h5><div class="chart-container" style="position: relative; height:300px;"><canvas id="competenciasChart"></canvas></div></div></div>
 </div>
 
+<div class="card card-custom p-4 mb-4">
+    <h5 class="fw-bold mb-1"><i class="fa-solid fa-chart-line text-info me-2"></i> Comparación interanual</h5>
+    <p class="text-muted small mb-3">Promedio anual de la experiencia general por actor; considera las instancias de mitad y final de cada año.</p>
+    <div class="chart-container" style="position: relative; height:300px;"><canvas id="evolucionChart"></canvas></div>
+</div>
+
 <div class="card card-custom p-4">
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h5 class="fw-bold mb-0"><i class="fa-solid fa-comments text-info me-2"></i> Reporte Cualitativo y Sugerencias de Mejora</h5>
@@ -498,6 +521,7 @@ DASHBOARD_TEMPLATE = BASE_TEMPLATE + """
 <script>
 let chartSat = null;
 let chartComp = null;
+let chartEvolucion = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     cargarEstadisticas();
@@ -536,10 +560,10 @@ function cargarEstadisticas() {
             chartComp = new Chart(ctxComp, {
                 type: 'radar',
                 data: {
-                    labels: ['Conoc. Teóricos', 'Instrucciones', 'Método/Orden', 'Uso Herramientas', 'Autonomía/Iniciativa', 'Trabajo Equipo', 'Responsabilidad'],
+                    labels: ['Conoc. Teóricos', 'Instrucciones', 'Método/Orden', 'Uso Herramientas', 'Autonomía/Iniciativa', 'Trabajo Equipo', 'Responsabilidad', 'Adaptabilidad tecnológica'],
                     datasets: [{
                         label: 'Nivel Promedio Observado',
-                        data: [data.competencias.teoria, data.competencias.instrucciones, data.competencias.metodo, data.competencias.herramientas, data.competencias.autonomia, data.competencias.equipo, data.competencias.responsabilidad],
+                        data: [data.competencias.teoria, data.competencias.instrucciones, data.competencias.metodo, data.competencias.herramientas, data.competencias.autonomia, data.competencias.equipo, data.competencias.responsabilidad, data.competencias.adaptabilidad_tecnologica],
                         fill: true,
                         backgroundColor: 'rgba(217, 119, 6, 0.2)',
                         borderColor: 'rgb(217, 119, 6)',
@@ -550,6 +574,25 @@ function cargarEstadisticas() {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: { r: { min: 0, max: 5 } }
+                }
+            });
+
+            const ctxEvolucion = document.getElementById('evolucionChart').getContext('2d');
+            if (chartEvolucion) chartEvolucion.destroy();
+            chartEvolucion = new Chart(ctxEvolucion, {
+                type: 'line',
+                data: {
+                    labels: data.evolucion.map(item => item.anio),
+                    datasets: [
+                        { label: 'Estudiantes', data: data.evolucion.map(item => item.estudiante), borderColor: 'rgb(37, 99, 235)', backgroundColor: 'rgba(37, 99, 235, 0.12)', tension: 0.25, spanGaps: true },
+                        { label: 'Docentes', data: data.evolucion.map(item => item.docente), borderColor: 'rgb(22, 163, 74)', backgroundColor: 'rgba(22, 163, 74, 0.12)', tension: 0.25, spanGaps: true },
+                        { label: 'Tutores', data: data.evolucion.map(item => item.tutor), borderColor: 'rgb(217, 119, 6)', backgroundColor: 'rgba(217, 119, 6, 0.12)', tension: 0.25, spanGaps: true }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { min: 0, max: 5, ticks: { stepSize: 1 } } }
                 }
             });
         })
@@ -586,7 +629,7 @@ def avg_metric(value):
 
 def create_demo_records():
     estudiante_1 = EvaluacionEstudiante(
-        nombre_estudiante='Matías Rossi', anio_division='6to 1ra', escuela='EETP N° 461',
+        nombre_estudiante='Matías Rossi', anio_division='6to 1ra', escuela=SCHOOL_OPTIONS[0],
         empresa='Techint', area='Mantenimiento Industrial', referente_empresa='Ing. Carlos Gómez',
         profesor_practica='Prof. Roberto Martínez', especialidad='Electromecánica',
         sat_experiencia_general=5, sat_relacion_teoria=4, sat_conocimiento_org=5,
@@ -596,7 +639,7 @@ def create_demo_records():
         propuesta_mejora='Extender las semanas de prácticas en el sector de automatización.'
     )
     estudiante_2 = EvaluacionEstudiante(
-        nombre_estudiante='Sofia Fernández', anio_division='6to 2da', escuela='EETP N° 462',
+        nombre_estudiante='Sofia Fernández', anio_division='6to 2da', escuela=SCHOOL_OPTIONS[0],
         empresa='Mantenimiento SRL', area='Calidad y Desarrollo', referente_empresa='Laura Paez',
         profesor_practica='Prof. Ana Torres', especialidad='Informática',
         sat_experiencia_general=4, sat_relacion_teoria=3, sat_conocimiento_org=4,
@@ -607,7 +650,7 @@ def create_demo_records():
     )
 
     docente_1 = EvaluacionProfesor(
-        nombre_profesor='Prof. Roberto Martínez', escuela='EETP N° 461', empresa='Techint',
+        nombre_profesor='Prof. Roberto Martínez', escuela=SCHOOL_OPTIONS[0], empresa='Techint',
         cantidad_estudiantes=3, sat_experiencia_general=5, sat_adecuacion_teorica=4,
         sat_trato_estudiantes=5, sat_relacion_referente=5, sat_apoyo_empresa=4,
         beneficios_estudiantes='Comprensión integral de normas de seguridad e higiene laboral.',
@@ -656,6 +699,10 @@ def render_page(template):
 
 
 def register_routes(app):
+    @app.context_processor
+    def inject_form_options():
+        return {'current_year': datetime.now().year, 'school_options': SCHOOL_OPTIONS}
+
     @app.route('/')
     def index():
         return render_page(INDEX_TEMPLATE)
@@ -664,6 +711,8 @@ def register_routes(app):
     def evaluacion_estudiante():
         if request.method == 'POST':
             evaluacion = EvaluacionEstudiante(
+                anio_evaluacion=int(request.form.get('anio_evaluacion', datetime.now().year)),
+                periodo=request.form.get('periodo'),
                 nombre_estudiante=request.form.get('nombre_estudiante'),
                 anio_division=request.form.get('anio_division'),
                 escuela=request.form.get('escuela'),
@@ -698,6 +747,8 @@ def register_routes(app):
     def evaluacion_profesor():
         if request.method == 'POST':
             evaluacion = EvaluacionProfesor(
+                anio_evaluacion=int(request.form.get('anio_evaluacion', datetime.now().year)),
+                periodo=request.form.get('periodo'),
                 nombre_profesor=request.form.get('nombre_profesor'),
                 escuela=request.form.get('escuela'),
                 empresa=request.form.get('empresa'),
@@ -721,6 +772,8 @@ def register_routes(app):
     def evaluacion_referente():
         if request.method == 'POST':
             evaluacion = EvaluacionReferente(
+                anio_evaluacion=int(request.form.get('anio_evaluacion', datetime.now().year)),
+                periodo=request.form.get('periodo'),
                 nombre_referente=request.form.get('nombre_referente'),
                 empresa=request.form.get('empresa'),
                 cargo=request.form.get('cargo'),
@@ -739,6 +792,7 @@ def register_routes(app):
                 desempeno_autonomia_iniciativa=int(request.form.get('desempeno_autonomia_iniciativa', 4)),
                 desempeno_trabajo_equipo=int(request.form.get('desempeno_trabajo_equipo', 4)),
                 desempeno_responsabilidad=int(request.form.get('desempeno_responsabilidad', 4)),
+                desempeno_adaptabilidad_tecnologica=int(request.form.get('desempeno_adaptabilidad_tecnologica', 4)),
                 inconvenientes=request.form.get('inconvenientes'),
                 beneficios=request.form.get('beneficios'),
                 aspectos_no_desarrollados=request.form.get('aspectos_no_desarrollados'),
@@ -782,6 +836,31 @@ def register_routes(app):
         comp_aut = avg_metric(db.session.query(func.avg(EvaluacionReferente.desempeno_autonomia_iniciativa)).scalar())
         comp_equ = avg_metric(db.session.query(func.avg(EvaluacionReferente.desempeno_trabajo_equipo)).scalar())
         comp_res = avg_metric(db.session.query(func.avg(EvaluacionReferente.desempeno_responsabilidad)).scalar())
+        comp_adaptabilidad = avg_metric(db.session.query(func.avg(EvaluacionReferente.desempeno_adaptabilidad_tecnologica)).scalar())
+
+        evolucion_por_anio = {}
+        yearly_metrics = (
+            (EvaluacionEstudiante, 'estudiante', EvaluacionEstudiante.sat_experiencia_general),
+            (EvaluacionProfesor, 'docente', EvaluacionProfesor.sat_experiencia_general),
+            (EvaluacionReferente, 'tutor', EvaluacionReferente.sat_experiencia_general),
+        )
+        for model, actor, metric in yearly_metrics:
+            yearly_averages = db.session.query(
+                model.anio_evaluacion,
+                func.avg(metric)
+            ).filter(model.anio_evaluacion.isnot(None)).group_by(model.anio_evaluacion).all()
+            for year, average in yearly_averages:
+                evolucion_por_anio.setdefault(year, {})[actor] = avg_metric(average)
+
+        evolucion = [
+            {
+                'anio': year,
+                'estudiante': averages.get('estudiante'),
+                'docente': averages.get('docente'),
+                'tutor': averages.get('tutor'),
+            }
+            for year, averages in sorted(evolucion_por_anio.items())
+        ]
 
         return jsonify({
             'totales': {'estudiantes': tot_est, 'docentes': tot_doc, 'tutores': tot_tut},
@@ -798,7 +877,9 @@ def register_routes(app):
                 'autonomia': comp_aut,
                 'equipo': comp_equ,
                 'responsabilidad': comp_res,
-            }
+                'adaptabilidad_tecnologica': comp_adaptabilidad,
+            },
+            'evolucion': evolucion,
         })
 
     @app.route('/api/observaciones')

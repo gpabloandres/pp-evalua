@@ -11,6 +11,8 @@ class EvaluacionEstudiante(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
+    anio_evaluacion = db.Column(db.Integer, nullable=False, default=lambda: datetime.now().year)
+    periodo = db.Column(db.String(20), nullable=False, default='mitad')
 
     nombre_estudiante = db.Column(db.String(120), nullable=False)
     anio_division = db.Column(db.String(50), nullable=False)
@@ -44,6 +46,8 @@ class EvaluacionProfesor(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
+    anio_evaluacion = db.Column(db.Integer, nullable=False, default=lambda: datetime.now().year)
+    periodo = db.Column(db.String(20), nullable=False, default='mitad')
 
     nombre_profesor = db.Column(db.String(120), nullable=False)
     escuela = db.Column(db.String(150), nullable=False)
@@ -66,6 +70,8 @@ class EvaluacionReferente(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
+    anio_evaluacion = db.Column(db.Integer, nullable=False, default=lambda: datetime.now().year)
+    periodo = db.Column(db.String(20), nullable=False, default='mitad')
 
     nombre_referente = db.Column(db.String(120), nullable=False)
     empresa = db.Column(db.String(150), nullable=False)
@@ -87,6 +93,7 @@ class EvaluacionReferente(db.Model):
     desempeno_autonomia_iniciativa = db.Column(db.Integer, nullable=False)
     desempeno_trabajo_equipo = db.Column(db.Integer, nullable=False)
     desempeno_responsabilidad = db.Column(db.Integer, nullable=False)
+    desempeno_adaptabilidad_tecnologica = db.Column(db.Integer, nullable=True)
 
     inconvenientes = db.Column(db.Text, nullable=True)
     beneficios = db.Column(db.Text, nullable=True)
