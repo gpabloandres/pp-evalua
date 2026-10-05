@@ -7,11 +7,11 @@ def get_likert_labels():
     return {
         'estudiante': [
             ('sat_experiencia_general', 'La experiencia en general'),
-            ('sat_relacion_teoria', 'Relación entre actividades realizadas y conocimientos teóricos'),
-            ('sat_conocimiento_org', 'Conocimiento adquirido sobre una organización empresarial'),
-            ('sat_trato_personal', 'El trato recibido por el personal de la empresa'),
+            ('sat_relacion_teoria', 'Relación entre actividades realizadas y la formación académica'),
+            ('sat_conocimiento_org', 'Conocimiento adquirido sobre la institución/empresa y su funcionamiento'),
+            ('sat_trato_personal', 'El trato recibido por el personal de la institución/empresa'),
             ('sat_condiciones_amb', 'Condiciones ambientales (espacio, equipamiento, herramientas)'),
-            ('sat_relacion_referente', 'Tu relación con el Referente de la empresa'),
+            ('sat_relacion_referente', 'Tu relación con el referente de la institución/empresa'),
             ('sat_orientaciones', 'Las orientaciones y explicaciones recibidas para tu tarea'),
             ('sat_relacion_profesor', 'Tu relación con el Profesor de Práctica Profesionalizante'),
             ('sat_apoyo_escuela', 'El apoyo de la escuela para resolver dudas o inconvenientes'),

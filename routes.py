@@ -238,9 +238,9 @@ FORM_ESTUDIANTE_TEMPLATE = BASE_TEMPLATE + """
                     <div class="col-md-3"><label class="form-label fw-semibold">Año / División *</label><input type="text" name="anio_division" class="form-control" required placeholder="Ej: 6to 2da"></div>
                     <div class="col-md-3"><label class="form-label fw-semibold">Especialidad *</label><input type="text" name="especialidad" class="form-control" required placeholder="Ej: Electromecánica / Informática"></div>
                     <div class="col-md-6"><label class="form-label fw-semibold">Escuela Técnica *</label><select name="escuela" class="form-select" required><option value="" selected disabled>Seleccione la escuela</option>{% for escuela in school_options %}<option value="{{ escuela }}">{{ escuela }}</option>{% endfor %}</select></div>
-                    <div class="col-md-6"><label class="form-label fw-semibold">Empresa / Organización *</label><input type="text" name="empresa" class="form-control" required placeholder="Ej: Techint / Mantenimiento SRL"></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">Institución / Empresa *</label><input type="text" name="empresa" class="form-control" required placeholder="Ej: Techint / Mantenimiento SRL / Ministerio / Hospital"></div>
                     <div class="col-md-4"><label class="form-label fw-semibold">Área / Sector asignado *</label><input type="text" name="area" class="form-control" required placeholder="Ej: Control de Calidad"></div>
-                    <div class="col-md-4"><label class="form-label fw-semibold">Referente en la Empresa *</label><input type="text" name="referente_empresa" class="form-control" required placeholder="Ej: Ing. Carlos Gómez"></div>
+                    <div class="col-md-4"><label class="form-label fw-semibold">Referente de la Institución / Empresa *</label><input type="text" name="referente_empresa" class="form-control" required placeholder="Ej: Ing. Carlos Gómez"></div>
                     <div class="col-md-4"><label class="form-label fw-semibold">Profesor de Práctica *</label><input type="text" name="profesor_practica" class="form-control" required placeholder="Ej: Prof. Roberto Martínez"></div>
                 </div>
 
@@ -261,11 +261,11 @@ FORM_ESTUDIANTE_TEMPLATE = BASE_TEMPLATE + """
                         <tbody>
                             {% set items = [
                                 ('sat_experiencia_general', 'La experiencia en general'),
-                                ('sat_relacion_teoria', 'Relación entre actividades realizadas y conocimientos teóricos'),
-                                ('sat_conocimiento_org', 'Conocimiento adquirido sobre una organización empresarial'),
-                                ('sat_trato_personal', 'El trato recibido por el personal de la empresa'),
+                                ('sat_relacion_teoria', 'Relación entre actividades realizadas y la formación académica'),
+                                ('sat_conocimiento_org', 'Conocimiento adquirido sobre la institución/empresa y su funcionamiento'),
+                                ('sat_trato_personal', 'El trato recibido por el personal de la institución/empresa'),
                                 ('sat_condiciones_amb', 'Condiciones ambientales (espacio, equipamiento, herramientas)'),
-                                ('sat_relacion_referente', 'Tu relación con el Referente de la empresa'),
+                                ('sat_relacion_referente', 'Tu relación con el referente de la institución/empresa'),
                                 ('sat_orientaciones', 'Las orientaciones y explicaciones recibidas para tu tarea'),
                                 ('sat_relacion_profesor', 'Tu relación con el Profesor de Práctica Profesionalizante'),
                                 ('sat_apoyo_escuela', 'El apoyo de la escuela para resolver dudas o inconvenientes')
@@ -286,7 +286,7 @@ FORM_ESTUDIANTE_TEMPLATE = BASE_TEMPLATE + """
                 <div class="row g-3 mb-4">
                     <div class="col-md-6"><label class="form-label fw-semibold">Itinerario seguido (áreas/sectores)</label><textarea name="resumen_itinerario" class="form-control" rows="2" placeholder="Resuma brevemente el itinerario..."></textarea></div>
                     <div class="col-md-6"><label class="form-label fw-semibold">Principales actividades desarrolladas</label><textarea name="resumen_actividades" class="form-control" rows="2" placeholder="Describa sus tareas principales..."></textarea></div>
-                    <div class="col-md-6"><label class="form-label fw-semibold">Ventaja de realizar la Práctica en esta empresa</label><textarea name="ventaja_empresa" class="form-control" rows="2" placeholder="Señale alguna ventaja observada..."></textarea></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">Ventaja de realizar la Práctica en esta institución/empresa</label><textarea name="ventaja_empresa" class="form-control" rows="2" placeholder="Señale alguna ventaja observada..."></textarea></div>
                     <div class="col-md-6"><label class="form-label fw-semibold">Aspecto más positivo para su formación</label><textarea name="aspecto_positivo" class="form-control" rows="2" placeholder="¿Cuál cree que fue el aspecto más positivo?"></textarea></div>
                     <div class="col-md-6"><label class="form-label fw-semibold">Actividades no desarrolladas que considera importantes</label><textarea name="actividades_no_desarrolladas" class="form-control" rows="2" placeholder="Temas o tareas que le hubiera gustado realizar..."></textarea></div>
                     <div class="col-md-6"><label class="form-label fw-semibold">Sugerencias de mejora / Cambios planteados</label><textarea name="propuesta_mejora" class="form-control" rows="2" placeholder="Si repitiera la experiencia, ¿qué cambiaría?"></textarea></div>
